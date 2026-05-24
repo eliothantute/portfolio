@@ -57,7 +57,7 @@
     content: '';
     position: fixed;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' fill='%23000' filter='url(%23noise)' opacity='0.3'/%3E%3C/svg%3E");
     pointer-events: none;
     z-index: 100;
     opacity: 0.4;
@@ -286,6 +286,8 @@
     letter-spacing: -0.05em;
     user-select: none;
     transition: transform 0.6s ease;
+    background-size: cover;
+    background-position: center;
   }
   .project-card:hover .project-bg { transform: scale(1.05); }
   .project-tag {
@@ -619,12 +621,12 @@
   <div class="projects-grid reveal">
 
     <a href="https://zeden-864496946830.europe-west2.run.app/" target="_blank" class="project-card card-web">
-      <div class="project-bg">ZDN</div>
+      <div class="project-bg" style="background-image: url('zeden-project.jpg');"></div>
       <div class="project-overlay"></div>
       <span class="project-tag">#Design</span>
       <div class="project-arrow">↗</div>
       <div class="project-info">
-        <span class="project-name">ZEDEN</span>
+        <span class="project-name">ZEDEN WEBSITE</span>
         <span class="project-desc">Site vitrine pour l'artiste de musique électronique</span>
       </div>
     </a>
