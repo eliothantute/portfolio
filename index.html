@@ -1,778 +1,125 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ELIOT HANTUTE — GRAPHIC · VIDEO · SOUND</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --black: #080808;
-    --white: #f0ede6;
-    --cream: #d8d3c8;
-    --acid: #c8ff00;
-    --red: #ff2200;
-    --dim: #2a2a2a;
-    --mid: #555;
-  }
-
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--black);
-    color: var(--white);
-    font-family: 'DM Mono', monospace;
-    font-weight: 300;
-    overflow-x: hidden;
-    cursor: none;
-  }
-
-  /* CUSTOM CURSOR */
-  .cursor {
-    position: fixed;
-    width: 8px; height: 8px;
-    background: var(--acid);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transition: transform 0.15s ease;
-    mix-blend-mode: difference;
-  }
-  .cursor-ring {
-    position: fixed;
-    width: 32px; height: 32px;
-    border: 1px solid var(--acid);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transition: all 0.3s ease;
-    mix-blend-mode: difference;
-  }
-
-  /* NOISE OVERLAY */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' fill='%23000' filter='url(%23noise)' opacity='0.3'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 100;
-    opacity: 0.4;
-  }
-
-  /* NAV */
-  nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 500;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 40px;
-    mix-blend-mode: normal;
-  }
-  nav::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--dim), transparent);
-  }
-  .nav-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    letter-spacing: 0.2em;
-    color: var(--white);
-    text-decoration: none;
-  }
-  .nav-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-  }
-  .nav-links a {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--mid);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--acid); }
-
-  /* HERO */
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 0 40px 60px;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 60% 40% at 70% 40%, #1a1a00 0%, transparent 70%),
-                radial-gradient(ellipse 40% 60% at 20% 80%, #0d0000 0%, transparent 60%);
-  }
-  .hero-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    color: var(--acid);
-    text-transform: uppercase;
-    margin-bottom: 24px;
-  }
-  .hero-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(72px, 12vw, 160px);
-    line-height: 0.9;
-    letter-spacing: -0.01em;
-    color: var(--white);
-    position: relative;
-    z-index: 2;
-  }
-  .hero-title span {
-    display: block;
-    -webkit-text-stroke: 1px var(--white);
-    color: transparent;
-  }
-  .hero-title em {
-    display: block;
-    font-style: normal;
-    color: var(--acid);
-  }
-  .hero-sub {
-    margin-top: 32px;
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    color: var(--mid);
-    text-transform: uppercase;
-    position: relative;
-    z-index: 2;
-  }
-  .hero-scroll {
-    position: absolute;
-    bottom: 60px; right: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    z-index: 2;
-  }
-  .hero-scroll span {
-    font-size: 9px;
-    letter-spacing: 0.3em;
-    color: var(--mid);
-    writing-mode: vertical-rl;
-    text-transform: uppercase;
-  }
-  .scroll-line {
-    width: 1px;
-    height: 60px;
-    background: linear-gradient(to bottom, var(--acid), transparent);
-    animation: scrollPulse 2s ease-in-out infinite;
-  }
-  @keyframes scrollPulse {
-    0%, 100% { opacity: 0.3; transform: scaleY(1); }
-    50% { opacity: 1; transform: scaleY(1.1); }
-  }
-
-  /* SECTION BASE */
-  section {
-    padding: 120px 40px;
-    position: relative;
-  }
-  .section-label {
-    font-size: 9px;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: var(--acid);
-    margin-bottom: 16px;
-    display: block;
-  }
-  .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(42px, 6vw, 80px);
-    line-height: 1;
-    letter-spacing: 0.02em;
-    color: var(--white);
-    margin-bottom: 48px;
-  }
-  .divider {
-    height: 1px;
-    background: linear-gradient(90deg, var(--dim), transparent);
-    margin-bottom: 80px;
-  }
-
-  /* ABOUT */
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 80px;
-    align-items: start;
-  }
-  .about-text {
-    font-size: 15px;
-    line-height: 1.8;
-    color: var(--cream);
-    max-width: 480px;
-  }
-  .about-text p + p { margin-top: 20px; }
-  .about-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2px;
-  }
-  .stat {
-    background: var(--dim);
-    padding: 32px 28px;
-    border: 1px solid #333;
-    transition: border-color 0.3s, background 0.3s;
-  }
-  .stat:hover {
-    border-color: var(--acid);
-    background: #111;
-  }
-  .stat-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 52px;
-    color: var(--acid);
-    line-height: 1;
-    display: block;
-  }
-  .stat-label {
-    font-size: 9px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--mid);
-    margin-top: 8px;
-    display: block;
-  }
-
-  /* PROJECTS */
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-  }
-  .project-card {
-    position: relative;
-    background: var(--dim);
-    overflow: hidden;
-    border: 1px solid #222;
-    transition: border-color 0.3s;
-    text-decoration: none;
-    display: block;
-    aspect-ratio: 4/5;
-  }
-  .project-card:hover { border-color: var(--acid); }
-  .project-card:hover .project-overlay { opacity: 1; }
-  .project-card:hover .project-arrow { transform: translate(4px, -4px); }
-  .project-bg {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 100px;
-    color: #1a1a1a;
-    letter-spacing: -0.05em;
-    user-select: none;
-    transition: transform 0.6s ease;
-    background-size: cover;
-    background-position: center;
-  }
-  .project-card:hover .project-bg { transform: scale(1.05); }
-  .project-tag {
-    position: absolute;
-    top: 20px; left: 20px;
-    font-size: 8px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--acid);
-    background: rgba(0,0,0,0.7);
-    padding: 4px 10px;
-    border: 1px solid rgba(200,255,0,0.3);
-  }
-  .project-info {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    padding: 24px 20px;
-    background: linear-gradient(to top, rgba(0,0,0,0.95) 60%, transparent);
-  }
-  .project-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    letter-spacing: 0.05em;
-    color: var(--white);
-    display: block;
-  }
-  .project-desc {
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    color: var(--mid);
-    margin-top: 6px;
-    display: block;
-  }
-  .project-arrow {
-    position: absolute;
-    top: 20px; right: 20px;
-    width: 28px; height: 28px;
-    border: 1px solid #444;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--white);
-    font-size: 14px;
-    transition: all 0.3s;
-  }
-  .project-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(200,255,0,0.03);
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-  }
-
-  /* Visual & project colors */
-  .card-visual .project-bg { color: #1f1f00; }
-  .card-sound .project-bg { color: #1a0000; }
-  .card-design .project-bg { color: #001a1a; }
-  .card-video .project-bg { color: #1a001a; }
-  .card-brand .project-bg { color: #1a1000; }
-  .card-web .project-bg { color: #001000; }
-
-  /* VIDEO SECTION */
-  .video-section { background: #050505; }
-  .video-wrapper {
-    position: relative;
-    aspect-ratio: 16/9;
-    background: #111;
-    border: 1px solid var(--dim);
-    overflow: hidden;
-  }
-  .video-wrapper iframe {
-    width: 100%; height: 100%;
-    border: none;
-  }
-  .video-label {
-    position: absolute;
-    top: -1px; left: 0;
-    background: var(--acid);
-    color: var(--black);
-    font-size: 9px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    padding: 6px 14px;
-    font-family: 'Space Mono', monospace;
-    font-weight: 700;
-  }
-
-  /* SKILLS STRIP */
-  .skills-strip {
-    padding: 60px 0;
-    overflow: hidden;
-    border-top: 1px solid var(--dim);
-    border-bottom: 1px solid var(--dim);
-    background: #050505;
-  }
-  .skills-track {
-    display: flex;
-    gap: 0;
-    animation: marquee 20s linear infinite;
-    white-space: nowrap;
-  }
-  .skill-item {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 48px;
-    letter-spacing: 0.05em;
-    color: transparent;
-    -webkit-text-stroke: 1px var(--dim);
-    padding: 0 40px;
-    flex-shrink: 0;
-    transition: -webkit-text-stroke-color 0.3s, color 0.3s;
-  }
-  .skill-item:hover {
-    -webkit-text-stroke-color: var(--acid);
-    color: transparent;
-  }
-  .skill-dot {
-    font-size: 48px;
-    color: var(--acid);
-    padding: 0 20px;
-    flex-shrink: 0;
-    font-family: 'Bebas Neue', sans-serif;
-  }
-  @keyframes marquee {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-
-  /* CONTACT */
-  .contact-section {
-    background: #0a0a0a;
-    min-height: 60vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .contact-big {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(60px, 10vw, 140px);
-    line-height: 0.9;
-    color: var(--white);
-    margin-bottom: 60px;
-  }
-  .contact-big span {
-    -webkit-text-stroke: 1px var(--white);
-    color: transparent;
-    display: block;
-  }
-  .contact-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 2px;
-    margin-top: 60px;
-  }
-  .contact-link {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 28px 24px;
-    background: var(--dim);
-    border: 1px solid #222;
-    text-decoration: none;
-    transition: border-color 0.3s, background 0.3s;
-    color: var(--white);
-  }
-  .contact-link:hover {
-    border-color: var(--acid);
-    background: #111;
-  }
-  .contact-link-label {
-    font-size: 9px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--mid);
-  }
-  .contact-link-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px;
-    letter-spacing: 0.05em;
-    color: var(--white);
-    transition: color 0.3s;
-  }
-  .contact-link:hover .contact-link-name { color: var(--acid); }
-  .contact-link-arrow {
-    font-size: 18px;
-    color: var(--mid);
-    margin-top: auto;
-    transition: transform 0.3s, color 0.3s;
-  }
-  .contact-link:hover .contact-link-arrow {
-    transform: translate(4px, -4px);
-    color: var(--acid);
-  }
-
-  /* FOOTER */
-  footer {
-    padding: 32px 40px;
-    border-top: 1px solid var(--dim);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .footer-copy {
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: var(--mid);
-    text-transform: uppercase;
-  }
-  .footer-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px;
-    letter-spacing: 0.15em;
-    color: var(--white);
-  }
-
-  /* FADE IN */
-  .reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* GLITCH */
-  @keyframes glitch {
-    0%, 90%, 100% { clip-path: none; transform: none; }
-    91% { clip-path: polygon(0 15%, 100% 15%, 100% 20%, 0 20%); transform: translate(-3px, 0); }
-    92% { clip-path: polygon(0 50%, 100% 50%, 100% 55%, 0 55%); transform: translate(3px, 0); }
-    93% { clip-path: polygon(0 70%, 100% 70%, 100% 80%, 0 80%); transform: translate(-2px, 0); }
-    94% { clip-path: none; transform: none; }
-  }
-  .hero-title { animation: glitch 8s ease-in-out infinite; }
-</style>
-</head>
-<body>
-
-<!-- CURSOR -->
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
-<!-- NAV -->
-<nav>
-  <a href="#" class="nav-logo">E·H</a>
-  <ul class="nav-links">
-    <li><a href="#work">Work</a></li>
-    <li><a href="#video">Video</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-</nav>
-
 <!-- HERO -->
-<section class="hero">
-  <div class="hero-bg"></div>
-  <span class="hero-tag">// Graphic · Video · Sound</span>
-  <h1 class="hero-title">
-    ELIOT
-    <span>HANTUTE</span>
-    <em>CREATE.</em>
-  </h1>
-  <p class="hero-sub">Designer · Motion · Composition sonore · Strasbourg/Paris</p>
-  <div class="hero-scroll">
-    <div class="scroll-line"></div>
-    <span>Scroll</span>
-  </div>
-</section>
 
-<!-- SKILLS STRIP -->
-<div class="skills-strip">
-  <div class="skills-track">
-    <span class="skill-item">GRAPHIC DESIGN</span><span class="skill-dot">·</span>
-    <span class="skill-item">MOTION</span><span class="skill-dot">·</span>
-    <span class="skill-item">SOUND DESIGN</span><span class="skill-dot">·</span>
-    <span class="skill-item">VJ</span><span class="skill-dot">·</span>
-    <span class="skill-item">BRAND IDENTITY</span><span class="skill-dot">·</span>
-    <span class="skill-item">WEB DESIGN</span><span class="skill-dot">·</span>
-    <span class="skill-item">VIDEO</span><span class="skill-dot">·</span>
-    <span class="skill-item">COMPOSITION</span><span class="skill-dot">·</span>
-    <!-- DUPE -->
-    <span class="skill-item">GRAPHIC DESIGN</span><span class="skill-dot">·</span>
-    <span class="skill-item">MOTION</span><span class="skill-dot">·</span>
-    <span class="skill-item">SOUND DESIGN</span><span class="skill-dot">·</span>
-    <span class="skill-item">VJ</span><span class="skill-dot">·</span>
-    <span class="skill-item">BRAND IDENTITY</span><span class="skill-dot">·</span>
-    <span class="skill-item">WEB DESIGN</span><span class="skill-dot">·</span>
-    <span class="skill-item">VIDEO</span><span class="skill-dot">·</span>
-    <span class="skill-item">COMPOSITION</span><span class="skill-dot">·</span>
-  </div>
-</div>
+<section class="min-h-screen flex items-center px-8 md:px-20">
 
-<!-- ABOUT -->
-<section id="about">
-  <div class="divider"></div>
-  <span class="section-label reveal">// 001 — À propos</span>
-  <div class="about-grid">
-    <div>
-      <h2 class="section-title reveal">Hi,<br>I enjoy<br>working.</h2>
-      <div class="about-text reveal">
-        <p>Je travaille à l'intersection du graphisme, de la vidéo et du son. Générer des formes, couleurs et ambiances pour les faire interagir avec le son — c'est là que tout se joue.</p>
-        <p>Direction artistique, prise d'image, édition, montage et composition sonore. Du concept à la livraison, je pilote chaque étape avec une obsession pour le détail.</p>
-      </div>
+  <div class="max-w-6xl mx-auto w-full">
+
+    <span class="text-[11px] tracking-[0.3em] uppercase text-orange-500">
+      DIGITAL DESIGNER · FRONT-END DEVELOPER
+    </span>
+
+    <h1 class="mt-6 text-7xl md:text-[10rem] font-black uppercase leading-none">
+      Eliot<br>
+      Hantute
+    </h1>
+
+    <div class="mt-8 max-w-xl">
+      <p class="text-xl text-zinc-400 leading-relaxed">
+        I design and build digital experiences for brands,
+        artists and local businesses.
+      </p>
     </div>
-    <div class="about-stats reveal">
-      <div class="stat">
-        <span class="stat-num">03</span>
-        <span class="stat-label">Disciplines</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num">5+</span>
-        <span class="stat-label">Projets livrés</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num">∞</span>
-        <span class="stat-label">Créativité</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num">01</span>
-        <span class="stat-label">Vision</span>
-      </div>
+
+    <div class="mt-10 flex gap-4">
+
+      <a href="#work"
+         class="px-6 py-4 bg-orange-500 text-white uppercase tracking-widest text-xs">
+        View Work
+      </a>
+
+      <a href="#contact"
+         class="px-6 py-4 border border-white/20 uppercase tracking-widest text-xs">
+        Contact
+      </a>
+
     </div>
+
   </div>
+
 </section>
 
-<!-- WORK -->
-<section id="work">
-  <div class="divider"></div>
-  <span class="section-label reveal">// 002 — Projets sélectionnés</span>
-  <h2 class="section-title reveal">Work</h2>
-  <div class="projects-grid reveal">
+<section id="work" class="py-32">
 
-    <a href="https://zeden-864496946830.europe-west2.run.app/" target="_blank" class="project-card card-web">
-      <div class="project-bg" style="background-image: url('https://raw.githubusercontent.com/eliothantute/portfolio/main/zeden-project.jpg');"></div>
-      <div class="project-overlay"></div>
-      <span class="project-tag">#Design</span>
-      <div class="project-arrow">↗</div>
-      <div class="project-info">
-        <span class="project-name">ZEDEN WEBSITE</span>
-        <span class="project-desc">Site vitrine pour l'artiste de musique électronique</span>
-      </div>
-    </a>
+  <div class="max-w-7xl mx-auto px-8 md:px-20">
 
-    <a href="https://www.figma.com/design/bG8r0mx9G0fSMKoxQwXohe/moonlearning-UI-Principles?node-id=33-714&t=vnWum8ctPG6x4TDa-0" target="_blank" class="project-card card-brand">
-      <div class="project-bg" style="background-image: url('https://raw.githubusercontent.com/eliothantute/portfolio/main/moonlearning-project.jpg');"></div>
-      <div class="project-overlay"></div>
-      <span class="project-tag">#Brand Identity</span>
-      <div class="project-arrow">↗</div>
-      <div class="project-info">
-        <span class="project-name">DESIGN FIGMA</span>
-        <span class="project-desc">Espace de co-working — Prototype UI</span>
-      </div>
-    </a>
+    <span class="text-orange-500 text-xs tracking-[0.3em] uppercase">
+      Selected Work
+    </span>
 
-    <a href="https://tolmatchevalexis-prog.github.io/rust-to-rust.html" target="_blank" class="project-card card-sound">
-      <div class="project-bg" style="background-image: url('https://raw.githubusercontent.com/eliothantute/portfolio/main/rust2rust.jpg');"></div>
-      <div class="project-overlay"></div>
-      <span class="project-tag">#Sound</span>
-      <div class="project-arrow">↗</div>
-      <div class="project-info">
-        <span class="project-name">RUST 2 RUST</span>
-        <span class="project-desc">Exploration sonore dans le monde de l'art textile et visuel</span>
-      </div>
-    </a>
+    <div class="mt-16 space-y-32">
 
-    <a href="https://www.arc-reflex.com/" target="_blank" class="project-card card-design">
-      <div class="project-bg" style="background-image: url('https://raw.githubusercontent.com/eliothantute/portfolio/main/arc-reflex-project.jpg.png');"></div>
-      <div class="project-overlay"></div>
-      <span class="project-tag">#Web Design</span>
-      <div class="project-arrow">↗</div>
-      <div class="project-info">
-        <span class="project-name">ARC-REFLEX</span>
-        <span class="project-desc">Refonte du site — Centre de Neuro Pédagogie de Strasbourg</span>
-      </div>
-    </a>
+      <!-- ARC REFLEX -->
 
-    <a href="https://www.youtube.com/watch?v=jFTdQC90yzI" target="_blank" class="project-card card-visual">
-            <div class="project-bg" style="background-image: url('https://raw.githubusercontent.com/eliothantute/portfolio/main/vj-set-project.png');"></div>
-      <div class="project-overlay"></div>
-      <span class="project-tag">#Motion & Visual</span>
-      <div class="project-arrow">↗</div>
-      <div class="project-info">
-        <span class="project-name">Audio Reactive Visual</span>
-        <span class="project-desc">Performance live — Motion & Visual en temps réel</span>
-      </div>
-    </a>
+      <article class="grid md:grid-cols-2 gap-16 items-center">
 
-    <a href="https://www.youtube.com/watch?v=n617nasyrIg" target="_blank" class="project-card card-video">
-      <div class="project-bg">▶</div>
-      <div class="project-overlay"></div>
-      <span class="project-tag">#Visual</span>
-      <div class="project-arrow">↗</div>
-      <div class="project-info">
-        <span class="project-name">VIDEO & Sound Design</span>
-        <span class="project-desc">Direction artistique · Prise d'image · Montage · Son</span>
-      </div>
-    </a>
+        <img
+          src="arc-reflex.jpg"
+          class="w-full aspect-[4/3] object-cover"
+        >
+
+        <div>
+
+          <span class="text-xs tracking-widest uppercase text-zinc-500">
+            01
+          </span>
+
+          <h2 class="text-5xl font-black uppercase mt-4">
+            Arc Reflex
+          </h2>
+
+          <p class="mt-6 text-zinc-400 leading-relaxed">
+            Complete redesign of the landing page,
+            logo creation, DNS setup,
+            deployment, SEO optimisation and
+            Google Business Profile management.
+          </p>
+
+          <div class="mt-8 flex gap-3 flex-wrap">
+
+            <span class="border border-white/10 px-3 py-2 text-xs">
+              Web Design
+            </span>
+
+            <span class="border border-white/10 px-3 py-2 text-xs">
+              Branding
+            </span>
+
+            <span class="border border-white/10 px-3 py-2 text-xs">
+              SEO
+            </span>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    </div>
 
   </div>
+
 </section>
 
-<!-- VIDEO -->
-<section id="video" class="video-section">
-  <div class="divider"></div>
-  <span class="section-label reveal">// 003 — Showreel</span>
-  <h2 class="section-title reveal">Video</h2>
-  <div class="video-wrapper reveal">
-    <div class="video-label">▶ PLAY</div>
-    <iframe
-      src="https://www.youtube.com/embed/xKeJUQSwW7g?iv_load_policy=3&rel=0&modestbranding=1&playsinline=1"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen>
-    </iframe>
+<section id="contact" class="py-32 border-t border-white/10">
+
+  <div class="max-w-6xl mx-auto px-8 md:px-20">
+
+    <span class="text-orange-500 uppercase tracking-[0.3em] text-xs">
+      Contact
+    </span>
+
+    <h2 class="mt-6 text-6xl font-black uppercase">
+      Let's build something together.
+    </h2>
+
+    <a
+      href="mailto:contact@eliotlab.fr"
+      class="mt-10 inline-block text-2xl hover:text-orange-500 transition-colors"
+    >
+      contact@eliotlab.fr
+    </a>
+
   </div>
+
 </section>
 
-<!-- CONTACT -->
-<section id="contact" class="contact-section">
-  <div class="divider"></div>
-  <span class="section-label reveal">// 004 — Contact</span>
-  <div class="contact-big reveal">
-    <span>TRAVAILLONS</span>
-    ENSEMBLE.
-  </div>
-  <div class="contact-grid reveal">
-    <a href="https://www.instagram.com/zedenmusic" target="_blank" class="contact-link">
-      <span class="contact-link-label">// Réseau</span>
-      <span class="contact-link-name">INSTAGRAM</span>
-      <span class="contact-link-arrow">↗</span>
-    </a>
-    <a href="https://open.spotify.com/intl-fr/artist/77sTx1uwPp7N9KlNPPGH49" target="_blank" class="contact-link">
-      <span class="contact-link-label">// Musique</span>
-      <span class="contact-link-name">SPOTIFY</span>
-      <span class="contact-link-arrow">↗</span>
-    </a>
-    <a href="https://soundcloud.com/zedenmusic/" target="_blank" class="contact-link">
-      <span class="contact-link-label">// Audio</span>
-      <span class="contact-link-name">SOUNDCLOUD</span>
-      <span class="contact-link-arrow">↗</span>
-    </a>
-    <a href="mailto:zedenbassmusic@gmail.com" class="contact-link">
-      <span class="contact-link-label">// Direct</span>
-      <span class="contact-link-name">EMAIL</span>
-      <span class="contact-link-arrow">↗</span>
-    </a>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <span class="footer-copy">© 2024 Eliot Hantute — All rights reserved</span>
-  <span class="footer-logo">E·H</span>
-</footer>
-
-<script>
-  // CURSOR
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-  function animCursor() {
-    cursor.style.left = mx - 4 + 'px';
-    cursor.style.top = my - 4 + 'px';
-    rx += (mx - rx) * 0.12;
-    ry += (my - ry) * 0.12;
-    ring.style.left = rx - 16 + 'px';
-    ring.style.top = ry - 16 + 'px';
-    requestAnimationFrame(animCursor);
-  }
-  animCursor();
-  document.querySelectorAll('a, button').forEach(el => {
-    el.addEventListener('mouseenter', () => { cursor.style.transform = 'scale(2.5)'; ring.style.transform = 'scale(1.5)'; });
-    el.addEventListener('mouseleave', () => { cursor.style.transform = 'scale(1)'; ring.style.transform = 'scale(1)'; });
-  });
-
-  // REVEAL ON SCROLL
-  const reveals = document.querySelectorAll('.reveal');
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('visible'), i * 80);
-      }
-    });
-  }, { threshold: 0.1 });
-  reveals.forEach(r => obs.observe(r));
-</script>
-</body>
-</html>
